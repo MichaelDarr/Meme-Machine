@@ -1,7 +1,9 @@
 var _ = require('lodash');
 
 module.exports = function() {
-    let defaults = { mongo: { uri: 'mongodb://localhost/mm' } }
+    let defaults = { mongo      : { uri: 'mongodb://localhost/mm' }
+                   , groupme    : { token: 'Kl76huEgVbacNaepKimt8QXpMtM1hnhxiCdXMph9' }
+                   }
 
     // Starting command for switching environments:
     // set NODE_ENV=test&&node index

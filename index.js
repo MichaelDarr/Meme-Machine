@@ -11,6 +11,7 @@ var conf = helpers.getConfig();
 var app = module.exports = express();
 
 app.use(bodyParser.json())
+app.use('/dash', agendash(agenda));
 
 global.Promise = Promise;
 mongoose.Promise = Promise;
