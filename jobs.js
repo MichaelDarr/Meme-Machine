@@ -35,14 +35,30 @@ agenda.define('import members', function(job, done) {
 agenda.define('import messages', function(job, done) {
     var Message = require("./models/message").Message;
 
-    var p_getGroup = rp({ method    : 'GET'
-                        , uri       : 'https://api.groupme.com/v3/groups/' + conf.bot.group_id + '/messages'
-                        , qs        : { token: conf.groupme.token }
-                        , json      : true
-                        })
+    var before_id = job.attrs.data;
+
+    if(before_id) {
+        var p_getGroup = rp({ method    : 'GET'
+                            , uri       : 'https://api.groupme.com/v3/groups/' + conf.bot.group_id + '/messages'
+                            , qs        : { token       : conf.groupme.token
+                                          , before_id
+                                          }
+                            , json      : true
+                            })
+    }
+    else {
+        var p_getGroup = rp({ method    : 'GET'
+                            , uri       : 'https://api.groupme.com/v3/groups/' + conf.bot.group_id + '/messages'
+                            , qs        : { token: conf.groupme.token }
+                            , json      : true
+                            })
+    }
 
     var p_saveMessages = p_getGroup.then(messages => {
         var messages = messages.response.messages
+        if(messages.length === 20) {
+            agenda.now('import messages', messages[19].id)
+        }
         return Promise.map(messages, message => {
             if(message.system) return null
             message.event_type = message.event ? message.event.type : null;
