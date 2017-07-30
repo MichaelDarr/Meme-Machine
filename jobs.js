@@ -2,15 +2,9 @@ var Agenda          = require('agenda')
   , helpers         = require('./helpers')
   , app             = require('./index')
   , rp              = require('request-promise')
-  , synaptic        = require('synaptic')
+  , markov          = require('markov');
 
 var conf = helpers.getConfig();
-
-var Neuron      = synaptic.Neuron
-  , Layer       = synaptic.Layer
-  , Network     = synaptic.Network
-  , Trainer     = synaptic.Trainer
-  , Architect   = synaptic.Architect
 
 var agenda = new Agenda({db: {address: conf.mongo.uri}});
 
@@ -91,6 +85,71 @@ agenda.define('send message', function(job, done) {
 
     p_sendMessage.then(message => {
         done();
+    })
+})
+
+agenda.define('generate markov message', function(job, done) {
+    var Message = require("./models/message").Message;
+
+    var m = markov(5);
+
+    var sender_id = job.attrs.data;
+
+    var p_getText = Message.find({ sender_id }).select('text')
+
+    var p_seedMarkov = p_getText.then(records => {
+        var finalString = '';
+        records.forEach(record => {
+            var text = record.text;
+            var lastChar = text[text.length -1];
+            if(!(['.', '!', '?'].indexOf(lastChar) > -1)) text = text + '.';
+            finalString = finalString.concat(' ' + record.text)
+        })
+        return new Promise(function(resolve, reject) {
+            m.seed(finalString, function() {
+                resolve();
+            })
+        })
+    })
+
+    p_seedMarkov.then(markov => {
+        while(true) {
+            var key = m.pick()
+            var message = m.fill(key, 100).join(' ')
+            var sentenceArr = message.match(/(.*?(?:\.|\?|!))(?: |$)/g)
+            sentenceArr = sentenceArr.slice(1, sentenceArr.length)
+            var buffer = ''
+            var finalArr = []
+            var conCount = 0
+            sentenceArr.forEach(sentence => {
+                if(sentence.length < conf.messages.maxLength) {
+                    if(buffer.length + sentence.length + 1 < conf.messages.maxLength) {
+                        if(Math.random > .3 && conCount < 2) {
+                            buffer = buffer + ' ' + sentence
+                            conCount++;
+                        }
+                        else {
+                            if(buffer != '' && buffer.length > 20) {
+                                finalArr.push(buffer)
+                            }
+                            buffer = sentence
+                        }
+                    }
+                    else {
+                        if(buffer.length > 20) {
+                            finalArr.push(buffer);
+                            buffer = sentence
+                        }
+                    }
+                }
+            })
+            if(finalArr.length > 0) {
+                var message = finalArr[Math.floor(Math.random()*finalArr.length)];
+                agenda.now('send message', message)
+                done();
+                break;
+            }
+        }
     })
 })
 

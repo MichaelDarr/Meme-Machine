@@ -3,6 +3,7 @@ var _ = require('lodash');
 module.exports = function() {
     let defaults = { mongo      : { uri: 'mongodb://localhost/mm' }
                    , groupme    : { token: 'Kl76huEgVbacNaepKimt8QXpMtM1hnhxiCdXMph9' }
+                   , messages   : { maxLength : 200 }
                    }
 
     // Starting command for switching environments:
