@@ -15,7 +15,6 @@ var schemaObj = { attachments   : [ { type    : String
                 , source_guid   : String
                 , text          : String
                 , user_id       : Number
-                , event_type    : String
                 }
 // { typeKey: '$type' } is necessary because mongoose will interpret the "type" in attachements incorrectly
 var MessageSchema = new mongoose.Schema(schemaObj, { typeKey: '$type' });

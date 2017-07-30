@@ -14,7 +14,11 @@ module.exports = function() {
                                         , group_id  : '28981508'
                                         }
                                  });
-
+         case "memes":
+         return _.merge(defaults, { bot: { id        : '4d968881054334449b1395e52d'
+                                         , group_id  : '20220779'
+                                         }
+                                  });
         case "test":
         return _.merge(defaults, { bot: { id        : '7a2cb91f3bc8c562add204aec3'
                                         , group_id  : '32647687'

@@ -21,7 +21,7 @@ agenda.define('import members', function(job, done) {
                     });
 
     var p_saveUsers = p_getGroup.then(group => {
-        var members = group.response.members;
+        var members = group.response.members
         return Promise.map(members, member => {
             return User.findOneAndUpdate({ user_id: member.user_id }, member, { upsert: true}).exec();
         })
@@ -61,8 +61,7 @@ agenda.define('import messages', function(job, done) {
             agenda.now('import messages', messages[19].id)
         }
         return Promise.map(messages, message => {
-            if(message.system) return null
-            message.event_type = message.event ? message.event.type : null;
+            if(message.system || message.event) return null
             return Message.findOneAndUpdate({ id: message.id }, message, { upsert: true }).exec();
         })
     })
@@ -91,7 +90,7 @@ agenda.define('send message', function(job, done) {
 agenda.define('generate markov message', function(job, done) {
     var Message = require("./models/message").Message;
 
-    var m = markov(5);
+    var m = markov(10);
 
     var sender_id = job.attrs.data;
 
@@ -100,10 +99,14 @@ agenda.define('generate markov message', function(job, done) {
     var p_seedMarkov = p_getText.then(records => {
         var finalString = '';
         records.forEach(record => {
-            var text = record.text;
-            var lastChar = text[text.length -1];
-            if(!(['.', '!', '?'].indexOf(lastChar) > -1)) text = text + '.';
-            finalString = finalString.concat(' ' + record.text)
+            if(record.text) {
+                var text = record.text;
+                var lastChar = text[text.length -1];
+                if(!(['.', '!', '?'].indexOf(lastChar) > -1)) text = text + '.';
+                if(text.charAt(0) != '*') {
+                    finalString = finalString.concat(' ' + record.text)
+                }
+            }
         })
         return new Promise(function(resolve, reject) {
             m.seed(finalString, function() {
@@ -124,7 +127,7 @@ agenda.define('generate markov message', function(job, done) {
             sentenceArr.forEach(sentence => {
                 if(sentence.length < conf.messages.maxLength) {
                     if(buffer.length + sentence.length + 1 < conf.messages.maxLength) {
-                        if(Math.random > .3 && conCount < 2) {
+                        if(Math.random > .75 && conCount < 2) {
                             buffer = buffer + ' ' + sentence
                             conCount++;
                         }
@@ -154,7 +157,7 @@ agenda.define('generate markov message', function(job, done) {
 })
 
 agenda.on('ready', function() {
-    //agenda.now('import members')
+    agenda.now('import members')
     agenda.start();
 })
 
