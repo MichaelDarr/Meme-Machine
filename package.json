@@ -1,0 +1,27 @@
+{
+  "name": "mememachine",
+  "version": "0.0.1",
+  "description": "The Meme Machine",
+  "main": "index.js",
+  "scripts": {
+    "test": "set NODE_ENV=test&&nodemon index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://MichaelDarr@github.com/MichaelDarr/Meme-Machine.git"
+  },
+  "author": "Michael Darr",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MichaelDarr/Meme-Machine/issues"
+  },
+  "homepage": "https://github.com/MichaelDarr/Meme-Machine#readme",
+  "dependencies": {
+    "agenda": "^0.9.1",
+    "agendash": "^0.4.0",
+    "bluebird": "^3.5.0",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "mongoose": "^4.11.4"
+  }
+}
