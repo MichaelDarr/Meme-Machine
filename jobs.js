@@ -2,8 +2,15 @@ var Agenda          = require('agenda')
   , helpers         = require('./helpers')
   , app             = require('./index')
   , rp              = require('request-promise')
+  , synaptic        = require('synaptic')
 
 var conf = helpers.getConfig();
+
+var Neuron      = synaptic.Neuron
+  , Layer       = synaptic.Layer
+  , Network     = synaptic.Network
+  , Trainer     = synaptic.Trainer
+  , Architect   = synaptic.Architect
 
 var agenda = new Agenda({db: {address: conf.mongo.uri}});
 
@@ -71,8 +78,24 @@ agenda.define('import messages', function(job, done) {
     })
 })
 
+agenda.define('send message', function(job, done) {
+    var text = job.attrs.data;
+
+    var p_sendMessage = rp({ method     : 'POST'
+                           , uri        : 'https://api.groupme.com/v3/bots/post'
+                           , body       : { bot_id  : conf.bot.id
+                                          , text
+                                          }
+                           , json       : true
+                           });
+
+    p_sendMessage.then(message => {
+        done();
+    })
+})
+
 agenda.on('ready', function() {
-    agenda.now('import members')
+    //agenda.now('import members')
     agenda.start();
 })
 

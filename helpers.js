@@ -1,4 +1,5 @@
-var Config = require('./config')
+var Config  = require('./config')
+  , rp      = require('request-promise')
 
 var conf = new Config();
 

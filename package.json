@@ -24,6 +24,8 @@
     "express": "^4.15.3",
     "mongoose": "^4.11.4",
     "request": "^2.81.0",
-    "request-promise": "^4.2.1"
+    "request-promise": "^4.2.1",
+    "synaptic": "^1.0.12",
+    "uuid": "^3.1.0"
   }
 }
