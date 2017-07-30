@@ -17,7 +17,7 @@ mongoose.Promise = Promise;
 
 mongoose.connect(conf.mongo.uri, { useMongoClient: true })
 
-require('./webhooks')(app, helpers)
+require('./webhooks')(app, helpers, agenda)
 
 app.listen(80, function () {
   console.log('Meme Machine is listening to you')

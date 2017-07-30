@@ -1,6 +1,7 @@
 var Agenda          = require('agenda')
   , helpers         = require('./helpers')
-  , app             = require("./index")
+  , app             = require('./index')
+  , requestPromise  = require('request-promise')
 
 var conf = helpers.getConfig();
 
