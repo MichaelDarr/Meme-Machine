@@ -102,8 +102,8 @@ agenda.define('generate markov message', function(job, done) {
             if(record.text) {
                 var text = record.text;
                 var lastChar = text[text.length -1];
-                if(!(['.', '!', '?'].indexOf(lastChar) > -1)) text = text + '.';
-                if(text.charAt(0) != '*') {
+                if(text.charAt(0) != '*' && text != 'Imitate' && text != 'immitate') {
+                    if(!(['.', '!', '?'].indexOf(lastChar) > -1)) text = text + '.';
                     finalString = finalString.concat(' ' + record.text)
                 }
             }
