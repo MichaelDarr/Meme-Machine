@@ -7,7 +7,9 @@ module.exports = function(app, helpers, agenda) {
                 agenda.now('generate markov message', req.body.sender_id);
             }
             else if(req.body.sender_id === '19747855') {
-                agenda.now('send message', 'Stop shitposting, Connor');
+                if(Math.random() > .075) {
+                    agenda.now('send message', 'Stop shitposting, Connor');
+                }
             }
         }
     })
