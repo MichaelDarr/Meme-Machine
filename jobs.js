@@ -71,6 +71,16 @@ agenda.define('import messages', function(job, done) {
     })
 })
 
+agenda.define('import single message', function(job, done) {
+    var Message = require("./models/message").Message;
+
+    var message = job.attrs.data;
+
+    var p_saveMessage = Message.findOneAndUpdate({ id: message.id }, message, { upsert: true }).exec();
+
+    p_saveMessages.then(done());
+})
+
 agenda.define('send message', function(job, done) {
     var text = job.attrs.data;
 
@@ -90,7 +100,7 @@ agenda.define('send message', function(job, done) {
 agenda.define('generate markov message', function(job, done) {
     var Message = require("./models/message").Message;
 
-    var m = markov(10);
+    var m = markov(6);
 
     var sender_id = job.attrs.data;
 
