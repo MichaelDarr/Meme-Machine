@@ -100,7 +100,7 @@ agenda.define('send message', function(job, done) {
 agenda.define('generate markov message', function(job, done) {
     var Message = require("./models/message").Message;
 
-    var m = markov(6);
+    var m = markov(5);
 
     var sender_id = job.attrs.data;
 
@@ -113,8 +113,7 @@ agenda.define('generate markov message', function(job, done) {
                 var text = record.text;
                 var lastChar = text[text.length -1];
                 if(text.charAt(0) != '*' && text != 'Imitate' && text != 'immitate') {
-                    if(!(['.', '!', '?'].indexOf(lastChar) > -1)) text = text + '.';
-                    finalString = finalString.concat(' ' + record.text)
+                    finalString = finalString.concat(record.text + ':spacer:')
                 }
             }
         })
@@ -128,39 +127,16 @@ agenda.define('generate markov message', function(job, done) {
     p_seedMarkov.then(markov => {
         while(true) {
             var key = m.pick()
-            var message = m.fill(key, 100).join(' ')
-            var sentenceArr = message.match(/(.*?(?:\.|\?|!))(?: |$)/g)
-            sentenceArr = sentenceArr.slice(1, sentenceArr.length)
-            var buffer = ''
-            var finalArr = []
-            var conCount = 0
-            sentenceArr.forEach(sentence => {
-                if(sentence.length < conf.messages.maxLength) {
-                    if(buffer.length + sentence.length + 1 < conf.messages.maxLength) {
-                        if(Math.random > .75 && conCount < 2) {
-                            buffer = buffer + ' ' + sentence
-                            conCount++;
-                        }
-                        else {
-                            if(buffer != '' && buffer.length > 20) {
-                                finalArr.push(buffer)
-                            }
-                            buffer = sentence
-                        }
-                    }
-                    else {
-                        if(buffer.length > 20) {
-                            finalArr.push(buffer);
-                            buffer = sentence
-                        }
-                    }
+            var messages = m.fill(key, 100).join(' ').split(':spacer:')
+            var counter = Math.floor(Math.random()*messages.length)
+            var message;
+            while(counter < messages.length) {
+                message = messages[counter]
+                if(message.length > 20) {
+                    agenda.now('send message', message)
+                    return done();
                 }
-            })
-            if(finalArr.length > 0) {
-                var message = finalArr[Math.floor(Math.random()*finalArr.length)];
-                agenda.now('send message', message)
-                done();
-                break;
+                counter++;
             }
         }
     })
