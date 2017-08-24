@@ -100,9 +100,13 @@ agenda.define('send message', function(job, done) {
 agenda.define('generate markov message', function(job, done) {
     var Message = require("./models/message").Message;
 
-    var m = markov(5);
+    var customData = job.attrs.data
 
-    var sender_id = job.attrs.data;
+    var mVar = customData.markov || 4
+
+    var m = markov(mVar);
+
+    var sender_id = customData.sender_id;
 
     var p_getText = Message.find({ sender_id }).select('text')
 
