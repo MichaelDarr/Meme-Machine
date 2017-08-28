@@ -28,6 +28,15 @@ module.exports = function(app, helpers, agenda) {
               }
             })
 
+    app.post('/groupme', function (req, res) {
+        agenda.now('import single message', req.body)
+        if(req.body.sender_type != "bot") {
+          if(Math.random() > .9) {
+            agenda.now('send message', "i think i'm in love with you for saying that, do it again")
+          }
+        }
+    })
+
             if(text.indexOf('imitate') > -1) {
                 var markov = 4
                 if(text.indexOf('good') > -1) markov = 6
