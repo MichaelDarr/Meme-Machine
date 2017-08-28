@@ -8,6 +8,25 @@ module.exports = function(app, helpers, agenda) {
         agenda.now('import single message', req.body)
         if(req.body.sender_type != "bot") {
             var text = req.body.text.toLowerCase()
+
+            var profanity = []
+            badWords.forEach(badWord => {
+              var place = text.indexOf(badWord)
+              var leftSide
+              var rightSide
+              if(place > -1) {
+                if(place === 0 || text[place - 1] === ' ') {
+                  leftSide = true
+                }
+                if(place + badWord.length === text.length || text[place + badWord.length + 1] === ' ') {
+                  rightSide = true
+                }
+              }
+              if(rightWord && leftWord) {
+                profanity.push(badWord)
+              }
+            })
+
             if(text.indexOf('imitate') > -1) {
                 var markov = 4
                 if(text.indexOf('good') > -1) markov = 6
@@ -16,22 +35,35 @@ module.exports = function(app, helpers, agenda) {
                 else if(text.indexOf('really bad') > -1) markov = 1
                 agenda.now('generate markov message', {markov, sender_id: req.body.sender_id});
             }
+            else if (profanity.length > 0) {
+                profanity.forEach(word => {
+                    agenda.now('send message', word)
+                })
+                if(req.body.sender_id === '30010919' && Math.random() > .5) {
+                    agenda.now('send message', "don't forget your manners, Ravn")
+                }
+                else {
+                    agenda.now('send message', profanityResponses[Math.floor(Math.random()*profanityResponses.length)]);
+                }
+            }
+            else if(req.body.sender_id === '140530527') {
+                if(Math.random() > .075) {
+                    agenda.now('send message', 'Fuck off, john');
+                }
+            }
             else if(req.body.sender_id === '19747855') {
                 if(Math.random() > .075) {
                     agenda.now('send message', 'Stop shitposting, Connor');
                 }
             }
             else if(req.body.sender_id === '30010919') {
-                if(Math.random() > .075) {
+                /*if(Math.random() > .075) {
                     agenda.now('send message', "don't forget your manners, Ravn")
-                }
+                }*/
             }
-            else if (new RegExp(badWords.join("|")).test(text)) {
-                agenda.now('send message', profanityResponses[Math.floor(Math.random()*profanityResponses.length)]);
-            }
-            else if(req.body.text.toLowerCase().indexOf('meme machine') > -1) {
+            /*else if(req.body.text.toLowerCase().indexOf('bot') > -1) {
                 agenda.now('send message', 'You called?');
-            }
+            }*/
         }
     })
 

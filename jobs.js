@@ -147,7 +147,7 @@ agenda.define('generate markov message', function(job, done) {
 })
 
 agenda.on('ready', function() {
-    agenda.now('import members')
+    //agenda.now('import members')
     agenda.start();
 })
 
