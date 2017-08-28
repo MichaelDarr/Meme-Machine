@@ -12,8 +12,9 @@ module.exports = function(app, helpers, agenda) {
             var profanity = []
             badWords.forEach(badWord => {
               var place = text.indexOf(badWord)
-              var leftSide
-              var rightSide
+              var leftSide = false;
+              var rightSide = false;
+              console.log(badWord)
               if(place > -1) {
                 if(place === 0 || text[place - 1] === ' ') {
                   leftSide = true
