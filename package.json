@@ -23,6 +23,7 @@
     "body-parser": "^1.17.2",
     "brain": "^0.7.0",
     "express": "^4.15.3",
+    "ipware": "^1.0.0",
     "markov": "0.0.7",
     "mongoose": "^4.11.4",
     "request": "^2.81.0",

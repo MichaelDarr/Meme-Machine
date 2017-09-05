@@ -1,4 +1,4 @@
-var _ = require('lodash');
+var _       = require('lodash')
 
 module.exports = function() {
     let defaults = { mongo      : { uri: 'mongodb://localhost/mm' }

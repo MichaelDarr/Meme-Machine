@@ -13,6 +13,11 @@ var app = module.exports = express();
 app.use(bodyParser.json())
 app.use('/dash', agendash(agenda));
 
+app.use(function(req, res, next) {
+    //useless middleware, for future security use
+    next();
+});
+
 global.Promise = Promise;
 mongoose.Promise = Promise;
 
