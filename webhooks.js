@@ -5,6 +5,8 @@ module.exports = function(app, helpers, agenda) {
     var profanityResponses = ["watch your profanity", "watch your language, asshole", "do you kiss your mother with that mouth?", "eat shit and die, you foul-mouthed whore", "grow up and stop cursing like some 5-year-old dumbass", "wow, look at this guy. think's he's cool or some shit, using words like that", "fuck you, cunt", "vulgarity isn't cool, you're a dumb piece of shit"]
 
     app.post('/groupme', function(req, res) {
+        console.log('pinged')
+        response = { success : true };
         agenda.now('import single message', req.body)
         if(req.body.sender_type != "bot") {
             var text = req.body.text.toLowerCase()
@@ -14,7 +16,6 @@ module.exports = function(app, helpers, agenda) {
               var place = text.indexOf(badWord)
               var leftSide = false;
               var rightSide = false;
-              console.log(badWord)
               if(place > -1) {
                 if(place === 0 || text[place - 1] === ' ') {
                   leftSide = true
@@ -23,21 +24,13 @@ module.exports = function(app, helpers, agenda) {
                   rightSide = true
                 }
               }
-              if(rightWord && leftWord) {
+              if(rightSide && leftSide) {
                 profanity.push(badWord)
               }
             })
-
-    app.post('/groupme', function (req, res) {
-        agenda.now('import single message', req.body)
-        if(req.body.sender_type != "bot") {
-          if(Math.random() > .9) {
-            agenda.now('send message', "i think i'm in love with you for saying that, do it again")
-          }
-        }
-    })
-
+            console.log(profanity)
             if(text.indexOf('imitate') > -1) {
+                console.log('imitation')
                 var markov = 4
                 if(text.indexOf('good') > -1) markov = 6
                 else if(text.indexOf('really good') > -1) markov = 8
@@ -49,31 +42,13 @@ module.exports = function(app, helpers, agenda) {
                 profanity.forEach(word => {
                     agenda.now('send message', word)
                 })
-                if(req.body.sender_id === '30010919' && Math.random() > .5) {
-                    agenda.now('send message', "don't forget your manners, Ravn")
-                }
-                else {
-                    agenda.now('send message', profanityResponses[Math.floor(Math.random()*profanityResponses.length)]);
-                }
-            }
-            else if(req.body.sender_id === '140530527') {
-                if(Math.random() > .075) {
-                    agenda.now('send message', 'Fuck off, john');
-                }
+                agenda.now('send message', profanityResponses[Math.floor(Math.random()*profanityResponses.length)]);
             }
             else if(req.body.sender_id === '19747855') {
                 if(Math.random() > .075) {
                     agenda.now('send message', 'Stop shitposting, Connor');
                 }
             }
-            else if(req.body.sender_id === '30010919') {
-                /*if(Math.random() > .075) {
-                    agenda.now('send message', "don't forget your manners, Ravn")
-                }*/
-            }
-            /*else if(req.body.text.toLowerCase().indexOf('bot') > -1) {
-                agenda.now('send message', 'You called?');
-            }*/
         }
     })
 

@@ -10,19 +10,16 @@ module.exports = function() {
     // set NODE_ENV=test&&node index
     switch(process.env.NODE_ENV.trim()) {
         case "production":
-        return _.merge(defaults, { bot: { id        : 'e48f8cb9768dca41aca063c877'
-                                        , group_id  : '28981508'
-                                        }
+        return _.merge(defaults, { bot      : { id        : 'e48f8cb9768dca41aca063c877'
+                                              , group_id  : '28981508'
+                                              }
+                                 , port    : 8000
                                  });
-         case "memes":
-         return _.merge(defaults, { bot: { id        : '4d968881054334449b1395e52d'
-                                         , group_id  : '20220779'
-                                         }
-                                  });
         case "test":
-        return _.merge(defaults, { bot: { id        : '7a2cb91f3bc8c562add204aec3'
-                                        , group_id  : '32647687'
-                                        }
+        return _.merge(defaults, { bot      : { id        : '7a2cb91f3bc8c562add204aec3'
+                                              , group_id  : '32647687'
+                                              }
+                                 , port    : 8001
                                  });
     }
     return defaults;

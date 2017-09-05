@@ -94,6 +94,9 @@ agenda.define('send message', function(job, done) {
 
     p_sendMessage.then(message => {
         done();
+    }).catch(err => {
+        console.log('failed to send message')
+        console.log(err)
     })
 })
 

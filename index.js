@@ -20,6 +20,6 @@ mongoose.connect(conf.mongo.uri, { useMongoClient: true })
 
 require('./webhooks')(app, helpers, agenda)
 
-app.listen(80, function () {
+app.listen(conf.port, function () {
   console.log('Meme Machine is listening to you')
 })
