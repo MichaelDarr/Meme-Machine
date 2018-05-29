@@ -4,7 +4,10 @@
   "description": "The Meme Machine",
   "main": "index.js",
   "scripts": {
-    "test": "set NODE_ENV=test&&nodemon index"
+    "test": "set NODE_ENV=test && nodemon index",
+    "start": "NODE_ENV=production nodemon index",
+    "importTest": "set NODE_ENV=test && set IMPORT=true && nodemon index",
+    "startImport": "NODE_ENV=production IMPORT=true nodemon index"
   },
   "repository": {
     "type": "git",

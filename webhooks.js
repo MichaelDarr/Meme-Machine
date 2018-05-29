@@ -1,8 +1,10 @@
+var rp = require('request-promise')
+
 module.exports = function(app, helpers, agenda) {
 
     var badWords = ["4r5e", "5h1t", "5hit", "a55", "anal", "anus", "ar5e", "arrse", "arse", "ass", "ass-fucker", "asses", "assfucker", "assfukka", "asshole", "assholes", "asswhole", "a_s_s", "b!tch", "b00bs", "b17ch", "b1tch", "ballbag", "balls", "ballsack", "bastard", "beastial", "beastiality", "bellend", "bestial", "bestiality", "bi+ch", "biatch", "bitch", "bitcher", "bitchers", "bitches", "bitchin", "bitching", "bloody", "blow job", "blowjob", "blowjobs", "boiolas", "bollock", "bollok", "boner", "boob", "boobs", "booobs", "boooobs", "booooobs", "booooooobs", "breasts", "buceta", "bugger", "bum", "bunny fucker", "butt", "butthole", "buttmuch", "buttplug", "c0ck", "c0cksucker", "carpet muncher", "cawk", "chink", "cipa", "cl1t", "clit", "clitoris", "clits", "cnut", "cock", "cock-sucker", "cockface", "cockhead", "cockmunch", "cockmuncher", "cocks", "cocksuck", "cocksucked", "cocksucker", "cocksucking", "cocksucks", "cocksuka", "cocksukka", "cok", "cokmuncher", "coksucka", "coon", "cox", "crap", "cum", "cummer", "cumming", "cums", "cumshot", "cunilingus", "cunillingus", "cunnilingus", "cunt", "cuntlick", "cuntlicker", "cuntlicking", "cunts", "cyalis", "cyberfuc", "cyberfuck", "cyberfucked", "cyberfucker", "cyberfuckers", "cyberfucking", "d1ck", "damn", "dick", "dickhead", "dildo", "dildos", "dink", "dinks", "dirsa", "dlck", "dog-fucker", "doggin", "dogging", "donkeyribber", "doosh", "duche", "dyke", "ejaculate", "ejaculated", "ejaculates", "ejaculating", "ejaculatings", "ejaculation", "ejakulate", "f u c k", "f u c k e r", "f4nny", "fag", "fagging", "faggitt", "faggot", "faggs", "fagot", "fagots", "fags", "fanny", "fannyflaps", "fannyfucker", "fanyy", "fatass", "fcuk", "fcuker", "fcuking", "feck", "fecker", "felching", "fellate", "fellatio", "fingerfuck", "fingerfucked", "fingerfucker", "fingerfuckers", "fingerfucking", "fingerfucks", "fistfuck", "fistfucked", "fistfucker", "fistfuckers", "fistfucking", "fistfuckings", "fistfucks", "flange", "fook", "fooker", "fuck", "fucka", "fucked", "fucker", "fuckers", "fuckhead", "fuckheads", "fuckin", "fucking", "fuckings", "fuckingshitmotherfucker", "fuckme", "fucks", "fuckwhit", "fuckwit", "fudge packer", "fudgepacker", "fuk", "fuker", "fukker", "fukkin", "fuks", "fukwhit", "fukwit", "fux", "fux0r", "f_u_c_k", "gangbang", "gangbanged", "gangbangs", "gaylord", "gaysex", "goatse", "God", "god-dam", "god-damned", "goddamn", "goddamned", "hardcoresex", "hell", "heshe", "hoar", "hoare", "hoer", "homo", "hore", "horniest", "horny", "hotsex", "jack-off", "jackoff", "jap", "jerk-off", "jism", "jiz", "jizm", "jizz", "kawk", "knob", "knobead", "knobed", "knobend", "knobhead", "knobjocky", "knobjokey", "kock", "kondum", "kondums", "kum", "kummer", "kumming", "kums", "kunilingus", "l3i+ch", "l3itch", "labia", "lust", "lusting", "m0f0", "m0fo", "m45terbate", "ma5terb8", "ma5terbate", "masochist", "master-bate", "masterb8", "masterbat*", "masterbat3", "masterbate", "masterbation", "masterbations", "masturbate", "mo-fo", "mof0", "mofo", "mothafuck", "mothafucka", "mothafuckas", "mothafuckaz", "mothafucked", "mothafucker", "mothafuckers", "mothafuckin", "mothafucking", "mothafuckings", "mothafucks", "mother fucker", "motherfuck", "motherfucked", "motherfucker", "motherfuckers", "motherfuckin", "motherfucking", "motherfuckings", "motherfuckka", "motherfucks", "muff", "mutha", "muthafecker", "muthafuckker", "muther", "mutherfucker", "n1gga", "n1gger", "nazi", "nigg3r", "nigg4h", "nigga", "niggah", "niggas", "niggaz", "nigger", "niggers", "nob", "nob jokey", "nobhead", "nobjocky", "nobjokey", "numbnuts", "nutsack", "orgasim", "orgasims", "orgasm", "orgasms", "p0rn", "pawn", "pecker", "penis", "penisfucker", "phonesex", "phuck", "phuk", "phuked", "phuking", "phukked", "phukking", "phuks", "phuq", "pigfucker", "pimpis", "piss", "pissed", "pisser", "pissers", "pisses", "pissflaps", "pissin", "pissing", "pissoff", "poop", "porn", "porno", "pornography", "pornos", "prick", "pricks", "pron", "pube", "pusse", "pussi", "pussies", "pussy", "pussys", "rectum", "retard", "rimjaw", "rimming", "s hit", "s.o.b.", "sadist", "schlong", "screwing", "scroat", "scrote", "scrotum", "semen", "sex", "sh!+", "sh!t", "sh1t", "shag", "shagger", "shaggin", "shagging", "shemale", "shi+", "shit", "shitdick", "shite", "shited", "shitey", "shitfuck", "shitfull", "shithead", "shiting", "shitings", "shits", "shitted", "shitter", "shitters", "shitting", "shittings", "shitty", "skank", "slut", "sluts", "smegma", "smut", "snatch", "son-of-a-bitch", "spac", "spunk", "s_h_i_t", "t1tt1e5", "t1tties", "teets", "teez", "testical", "testicle", "tit", "titfuck", "tits", "titt", "tittie5", "tittiefucker", "titties", "tittyfuck", "tittywank", "titwank", "tosser", "turd", "tw4t", "twat", "twathead", "twatty", "twunt", "twunter", "v14gra", "v1gra", "vagina", "viagra", "vulva", "w00se", "wang", "wank", "wanker", "wanky", "whoar", "whore", "willies", "willy", "xrated", "xxx"]
 
-    var profanityResponses = ["watch your profanity", "cursing isn't cool", "I don't like bad language :(", "please be nice"]
+    var profanityResponses = ["watch your profanity", "cursing isn't cool", "I don't like bad language :(", "this is a christian minecraft server", "watch you're dirty mouth"]
 
     app.post('/groupme', function(req, res) {
         response = { success : true };
@@ -27,16 +29,58 @@ module.exports = function(app, helpers, agenda) {
                 profanity.push(badWord)
               }
             })
-            if(text.indexOf('imitate') > -1) {
-                var markov = 4
-                if(text.indexOf('good') > -1) markov = 6
-                else if(text.indexOf('really good') > -1) markov = 8
-                else if(text.indexOf('bad') > -1) markov = 2
-                else if(text.indexOf('really bad') > -1) markov = 1
-                agenda.now('generate markov message', {markov, sender_id: req.body.sender_id});
+            if(text.indexOf('/imitate') > -1) {
+              var markov = 4
+              if(text.indexOf('good') > -1) markov = 6
+              else if(text.indexOf('really good') > -1) markov = 8
+              else if(text.indexOf('bad') > -1) markov = 2
+              else if(text.indexOf('really bad') > -1) markov = 1
+              agenda.now('generate markov message', {markov, sender_id: req.body.sender_id});
             }
-            else if (profanity.length > 0) {
-                agenda.now('send message', profanityResponses[Math.floor(Math.random()*profanityResponses.length)]);
+            if (profanity.length > 0 && Math.random() < .2) {
+              agenda.now('send message', profanityResponses[Math.floor(Math.random()*profanityResponses.length)]);
+            }
+            if(text.indexOf('/norris') > -1) {
+              agenda.now('send norris');
+            }
+            if(text.indexOf('/kitty') > -1) {
+              var p_getKitty = rp(
+                { method: 'GET'
+                , uri   : 'http://thecatapi.com/api/images/get'
+                , qs    : { format: 'html' }
+                , json  : false
+                });
+
+              p_getKitty.then(kitty => {
+                agenda.now('send message', kitty.match(/<img[^>]+src="([^">]+)"/)[1])
+              })
+            }
+            if(text.indexOf('/dog') > -1) {
+              var p_getPuppy = rp(
+                { method: 'GET'
+                , uri   : 'https://dog.ceo/api/breeds/image/random'
+                , json  : true
+                });
+
+              p_getPuppy.then(puppy => {
+                agenda.now('send message', puppy.message)
+              })
+            }
+            if(text.indexOf('/pony') > -1) {
+              var ponyType = text.match(/pony\s*(\S+)/)[1]
+              if(!ponyType) {
+                ponyType = 'happy'
+              }
+              var p_getPony = rp(
+                { method: 'GET'
+                , uri   : 'http://ponyfaces.hpcodecraft.me/api.json/tag:' + ponyType
+                , json  : true
+                });
+
+              p_getPony.then(pony => {
+                var ponyPic = pony.faces[Math.floor(Math.random()*pony.faces.length)].link;
+                agenda.now('send message', ponyPic)
+              })
             }
             /*else if(req.body.sender_id === '19747855') {
                 if(Math.random() > .075) {

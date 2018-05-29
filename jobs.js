@@ -78,7 +78,7 @@ agenda.define('import single message', function(job, done) {
 
     var p_saveMessage = Message.findOneAndUpdate({ id: message.id }, message, { upsert: true }).exec();
 
-    p_saveMessages.then(done());
+    p_saveMessage.then(done());
 })
 
 agenda.define('send message', function(job, done) {
@@ -98,6 +98,34 @@ agenda.define('send message', function(job, done) {
         console.log('failed to send message')
         console.log(err)
     })
+})
+
+agenda.define('send norris', function(job, done) {
+
+  var p_getNorris = rp(
+    { method: 'GET'
+    , uri   : 'https://api.chucknorris.io/jokes/random'
+    , json       : true
+    });
+
+  var p_sendMessage = p_getNorris.then(norris => {
+    rp(
+      { method: 'POST'
+      , uri   : 'https://api.groupme.com/v3/bots/post'
+      , body  : { bot_id: conf.bot.id
+                , text  : norris.value
+                }
+      , json  : true
+      }
+    )
+  })
+
+  p_sendMessage.then(message => {
+      done();
+  }).catch(err => {
+      console.log('failed to send message')
+      console.log(err)
+  })
 })
 
 agenda.define('generate markov message', function(job, done) {
@@ -150,8 +178,10 @@ agenda.define('generate markov message', function(job, done) {
 })
 
 agenda.on('ready', function() {
+  if(conf.import) {
     agenda.now('import members')
-    agenda.start();
+  }
+  agenda.start();
 })
 
 module.exports = agenda;
